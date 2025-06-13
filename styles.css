@@ -19,6 +19,11 @@
     --snake-color: #27ae60;
     --food-color: #e74c3c;
     --grid-color: rgba(255, 255, 255, 0.1);
+
+    /* Variáveis para a mensagem de novo recorde (Tema Claro) */
+    --new-record-message-bg: #fff8e1; /* Um amarelo bem claro, como papel de pergaminho */
+    --new-record-message-text: var(--accent-warning); /* Texto na cor de aviso (laranja/amarelo) */
+    --new-record-message-border: var(--accent-warning);
 }
 
 [data-theme="dark"] {
@@ -41,6 +46,11 @@
     --snake-color: #00ff88;
     --food-color: #ff4757;
     --grid-color: rgba(255, 255, 255, 0.05);
+
+    /* Variáveis para a mensagem de novo recorde (Tema Escuro) */
+    --new-record-message-bg: #423513; /* Um marrom/dourado escuro */
+    --new-record-message-text: #ffdd99; /* Um dourado/amarelo claro para o texto */
+    --new-record-message-border: #ffdd99;
 }
 
 /* ===== RESET E BASE ===== */
@@ -422,6 +432,41 @@ body {
     animation: recordCelebration 1s ease-in-out infinite alternate;
 }
 
+/* Estilos para a mensagem de novo recorde (substitui ou complementa o .new-record acima se o ID for new-record-display) */
+.new-record-message {
+    background-color: var(--new-record-message-bg);
+    color: var(--new-record-message-text);
+    padding: 18px 25px; /* Mais preenchimento */
+    border-radius: 12px; /* Cantos mais arredondados, consistentes com .menu-btn */
+    margin-top: 25px; /* Mais margem */
+    margin-bottom: 25px;
+    text-align: center;
+    font-size: 1.4em; /* Fonte maior */
+    font-weight: bold;
+    border: 3px solid var(--new-record-message-border); /* Borda mais grossa e colorida */
+    box-shadow: 0 8px 25px var(--shadow-medium); /* Sombra mais pronunciada */
+    animation: pulse-new-record 1.2s infinite alternate; /* Animação de pulsação */
+    
+    /* Para transições suaves de aparição/desaparição */
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    visibility: visible;
+    transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out, visibility 0s linear 0s,
+                background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; /* Adiciona transição para cores */
+}
+
+.new-record-message.hidden {
+    opacity: 0;
+    transform: translateY(30px) scale(0.9); /* Animação de saída mais pronunciada */
+    visibility: hidden;
+    transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out, visibility 0s linear 0.4s;
+}
+
+@keyframes pulse-new-record {
+    from { transform: scale(1); box-shadow: 0 8px 25px var(--shadow-medium); }
+    to { transform: scale(1.05); box-shadow: 0 12px 30px var(--shadow-heavy); } /* Sombra mais forte no pulso */
+}
+
 .new-record.hidden {
     display: none;
 }
@@ -686,4 +731,3 @@ button:focus, input:focus {
 * {
     transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
 }
-
