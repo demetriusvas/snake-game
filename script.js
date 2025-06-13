@@ -18,8 +18,8 @@ const GAME_CONFIG = {
         medium: 2,
         hard: 3
     },
-    FOOD_TIMEOUT: 9000, // 9 segundos
-    ENERGY_DURATION: 9000, // 9 segundos
+    FOOD_TIMEOUT: 10000, // 9 segundos
+    ENERGY_DURATION: 10000, // 9 segundos
     INITIAL_LIVES: 3
 };
 
