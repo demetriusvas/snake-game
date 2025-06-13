@@ -10,9 +10,9 @@ const GAME_CONFIG = {
     INITIAL_SPEED: {
         easy: 200,   // Intervalo maior = mais lento
         medium: 100, // Intervalo médio
-        hard: 60     // Intervalo menor = mais rápido
+        hard: 70     // Intervalo menor = mais rápido
     },
-    SPEED_INCREASE: 10, // 0.05s = 50ms
+    SPEED_INCREASE: 5, // Diminui o intervalo em 5ms por comida (aumento de velocidade mais suave)
     POINTS_PER_LEVEL: {
         easy: 1,
         medium: 2,
@@ -349,10 +349,17 @@ class SnakeGame {
                 score: this.score,
                 level: this.currentLevel,
                 speed: (GAME_CONFIG.INITIAL_SPEED[this.currentLevel] / this.speed).toFixed(1),
-                date: new Date().toLocaleString('pt-BR')
+                date: new Date().toLocaleString('pt-BR'),
             });
-            // Opcional: Adicionar uma pequena notificação visual ou sonora de que o recorde foi salvo.
-            // Por enquanto, ele será salvo silenciosamente.
+            // Avisar com confetes!
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 150, // Mais confetes para a celebração!
+                    spread: 100,        // Espalhar mais
+                    origin: { y: 0.6 }, // Origem um pouco abaixo do centro vertical
+                    zIndex: 10000       // Garantir que fique por cima de outros elementos
+                });
+            }
         }
 
         this.showScreen('gameover');
@@ -445,27 +452,52 @@ class Snake {
         }
     }
 
+    // Método auxiliar para desenhar retângulos com cantos arredondados
+    _drawRoundedRect(ctx, x, y, width, height, radius) {
+        if (typeof radius === 'undefined') {
+            radius = 5;
+        }
+        if (width < 2 * radius) radius = width / 2;
+        if (height < 2 * radius) radius = height / 2;
+        
+        ctx.beginPath();
+        ctx.moveTo(x + radius, y);
+        ctx.arcTo(x + width, y, x + width, y + height, radius);
+        ctx.arcTo(x + width, y + height, x, y + height, radius);
+        ctx.arcTo(x, y + height, x, y, radius);
+        ctx.arcTo(x, y, x + width, y, radius);
+        ctx.closePath();
+        ctx.fill();
+    }
+
     draw(ctx, gridSize) {
         const snakeColor = getComputedStyle(document.documentElement).getPropertyValue('--snake-color');
-        
+        const cornerRadius = gridSize * 0.2; // Raio para os cantos arredondados
+
         this.body.forEach((segment, index) => {
+            const segX = segment.x * gridSize;
+            const segY = segment.y * gridSize;
+            const segSize = gridSize;
+
+            // Deixar um pequeno espaço para a grade
+            const itemPadding = 1; 
+            const itemX = segX + itemPadding;
+            const itemY = segY + itemPadding;
+            const itemSize = segSize - (itemPadding * 2);
+
             ctx.fillStyle = index === 0 ? snakeColor : snakeColor + '80';
-            ctx.fillRect(
-                segment.x * gridSize + 1,
-                segment.y * gridSize + 1,
-                gridSize - 2,
-                gridSize - 2
-            );
+            this._drawRoundedRect(ctx, itemX, itemY, itemSize, itemSize, cornerRadius);
 
             // Adicionar brilho na cabeça
             if (index === 0) {
+                const shinePadding = itemPadding + gridSize * 0.1;
+                const shineX = segX + shinePadding;
+                const shineY = segY + shinePadding;
+                const shineSize = segSize - (shinePadding * 2);
+                const shineRadius = shineSize * 0.2;
+
                 ctx.fillStyle = snakeColor + '40';
-                ctx.fillRect(
-                    segment.x * gridSize + 3,
-                    segment.y * gridSize + 3,
-                    gridSize - 6,
-                    gridSize - 6
-                );
+                this._drawRoundedRect(ctx, shineX, shineY, shineSize, shineSize, shineRadius);
             }
         });
     }
@@ -493,31 +525,50 @@ class Food {
         }
     }
 
+    // Método auxiliar para desenhar retângulos com cantos arredondados
+    _drawRoundedRect(ctx, x, y, width, height, radius) {
+        if (typeof radius === 'undefined') {
+            radius = 5;
+        }
+        if (width < 2 * radius) radius = width / 2;
+        if (height < 2 * radius) radius = height / 2;
+
+        ctx.beginPath();
+        ctx.moveTo(x + radius, y);
+        ctx.arcTo(x + width, y, x + width, y + height, radius);
+        ctx.arcTo(x + width, y + height, x, y + height, radius);
+        ctx.arcTo(x, y + height, x, y, radius);
+        ctx.arcTo(x, y, x + width, y, radius);
+        ctx.closePath();
+        ctx.fill();
+    }
+
     draw(ctx, gridSize) {
         const foodColor = getComputedStyle(document.documentElement).getPropertyValue('--food-color');
+        const foodBaseX = this.x * gridSize;
+        const foodBaseY = this.y * gridSize;
         
         // Desenhar comida com efeito pulsante
         const time = Date.now() * 0.005;
-        const pulse = Math.sin(time) * 0.1 + 0.9;
-        const size = gridSize * pulse;
-        const offset = (gridSize - size) / 2;
+        const pulseFactor = Math.sin(time) * 0.1 + 0.9; // Fator de pulsação (0.9 a 1.0)
+        
+        // Tamanho do item, considerando um pequeno padding para a grade e a pulsação
+        const maxItemSize = gridSize - 2; 
+        const currentItemSize = maxItemSize * pulseFactor;
+        const itemOffset = (gridSize - currentItemSize) / 2; // Centraliza o item pulsante na célula
+
+        const itemX = foodBaseX + itemOffset;
+        const itemY = foodBaseY + itemOffset;
+        const cornerRadius = currentItemSize * 0.25; // Raio proporcional ao tamanho atual
 
         ctx.fillStyle = foodColor;
-        ctx.fillRect(
-            this.x * gridSize + offset,
-            this.y * gridSize + offset,
-            size,
-            size
-        );
+        this._drawRoundedRect(ctx, itemX, itemY, currentItemSize, currentItemSize, cornerRadius);
 
         // Adicionar brilho
-        ctx.fillStyle = foodColor + '60';
-        ctx.fillRect(
-            this.x * gridSize + offset + 2,
-            this.y * gridSize + offset + 2,
-            size - 4,
-            size - 4
-        );
+        const shineSize = currentItemSize * 0.6; // Brilho um pouco menor
+        const shineOffset = (currentItemSize - shineSize) / 2; // Centraliza o brilho
+        ctx.fillStyle = foodColor + '80'; // Um pouco mais opaco para o brilho
+        this._drawRoundedRect(ctx, itemX + shineOffset, itemY + shineOffset, shineSize, shineSize, shineSize * 0.25);
     }
 }
 
