@@ -110,9 +110,8 @@
                 </div>
             </div>
             
-            <div id="new-record" class="new-record hidden">
-                🎉 Novo Recorde! 🎉
-                <input type="text" id="player-name" placeholder="Digite seu nome" maxlength="20">
+            <div id="new-record-display" class="new-record-message hidden">
+                <!-- Mensagem de novo recorde e posição será inserida aqui -->
             </div>
 
             <div class="gameover-options">
@@ -159,6 +158,12 @@
     </audio>
     <audio id="life-lost-sound" preload="auto">
         <source src="assets/audio/collision.wav" type="audio/wav">
+    </audio>
+    <audio id="new-record-sound" preload="auto">
+        <source src="assets/audio/new-record.wav" type="audio/wav"> <!-- Substitua pelo caminho do seu arquivo de som -->
+    </audio>
+    <audio id="game-over-sound" preload="auto">
+        <source src="assets/audio/game-over.wav" type="audio/wav"> <!-- Substitua pelo caminho do seu arquivo de som -->
     </audio>
 
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>

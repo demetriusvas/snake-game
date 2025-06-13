@@ -10,7 +10,7 @@ const GAME_CONFIG = {
     INITIAL_SPEED: {
         easy: 200,   // Intervalo maior = mais lento
         medium: 100, // Intervalo médio
-        hard: 70     // Intervalo menor = mais rápido
+        hard: 80     // Intervalo menor = mais rápido
     },
     SPEED_INCREASE: 5, // Diminui o intervalo em 5ms por comida (aumento de velocidade mais suave)
     POINTS_PER_LEVEL: {
