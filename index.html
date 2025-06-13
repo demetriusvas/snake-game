@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake Game - Jogo da Cobrinha</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Tela de Menu Principal -->
+    <div id="menu-screen" class="screen active">
+        <div class="container">
+            <h1 class="game-title">🐍 Snake Game</h1>
+            <div class="menu-options">
+                <button class="menu-btn" data-level="easy">
+                    <span class="level-name">Fácil</span>
+                    <span class="level-desc">1 ponto por item</span>
+                </button>
+                <button class="menu-btn" data-level="medium">
+                    <span class="level-name">Médio</span>
+                    <span class="level-desc">2 pontos por item</span>
+                </button>
+                <button class="menu-btn" data-level="hard">
+                    <span class="level-name">Difícil</span>
+                    <span class="level-desc">3 pontos por item</span>
+                </button>
+                <button class="menu-btn secondary" id="records-btn">
+                    📊 Ver Recordes
+                </button>
+            </div>
+            <button id="theme-toggle" class="theme-btn">🌙</button>
+        </div>
+    </div>
+
+    <!-- Tela do Jogo -->
+    <div id="game-screen" class="screen">
+        <div class="game-container">
+            <!-- HUD Superior -->
+            <div class="hud">
+                <div class="hud-left">
+                    <div class="score-display">
+                        <span class="label">Pontos:</span>
+                        <span id="score">0</span>
+                    </div>
+                    <div class="speed-display">
+                        <span class="label">Velocidade:</span>
+                        <span id="speed">1.0x</span>
+                    </div>
+                </div>
+                <div class="hud-center">
+                    <div class="lives-display">
+                        <span class="label">Vidas:</span>
+                        <div id="lives-hearts">
+                            <span class="heart">❤️</span>
+                            <span class="heart">❤️</span>
+                            <span class="heart">❤️</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="hud-right">
+                    <div class="energy-container">
+                        <span class="label">Energia:</span>
+                        <div class="energy-bar-container">
+                            <div id="energy-bar" class="energy-bar"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Canvas do Jogo -->
+            <canvas id="game-canvas" width="600" height="600"></canvas>
+
+            <!-- Controles Mobile -->
+            <div class="mobile-controls">
+                <div class="control-row">
+                    <button class="control-btn" data-direction="up">↑</button>
+                </div>
+                <div class="control-row">
+                    <button class="control-btn" data-direction="left">←</button>
+                    <button class="control-btn" data-direction="down">↓</button>
+                    <button class="control-btn" data-direction="right">→</button>
+                </div>
+            </div>
+
+            <!-- Botões de Controle -->
+            <div class="game-controls">
+                <button id="pause-btn" class="control-button">⏸️ Pausar</button>
+                <button id="menu-btn" class="control-button">🏠 Menu</button>
+                <button id="theme-toggle-game" class="theme-btn">🌙</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tela de Game Over -->
+    <div id="gameover-screen" class="screen">
+        <div class="container">
+            <h1 class="gameover-title">Game Over!</h1>
+            <div class="gameover-stats">
+                <div class="stat">
+                    <span class="stat-label">Pontuação Final:</span>
+                    <span id="final-score" class="stat-value">0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Nível:</span>
+                    <span id="final-level" class="stat-value">Fácil</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Velocidade Máxima:</span>
+                    <span id="final-speed" class="stat-value">1.0x</span>
+                </div>
+            </div>
+            
+            <div id="new-record" class="new-record hidden">
+                🎉 Novo Recorde! 🎉
+                <input type="text" id="player-name" placeholder="Digite seu nome" maxlength="20">
+            </div>
+
+            <div class="gameover-options">
+                <button class="menu-btn" id="restart-btn">🔄 Jogar Novamente</button>
+                <button class="menu-btn secondary" id="main-menu-btn">🏠 Menu Principal</button>
+                <button class="menu-btn secondary" id="view-records-btn">📊 Ver Recordes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tela de Recordes -->
+    <div id="records-screen" class="screen">
+        <div class="container">
+            <h1 class="records-title">🏆 Recordes</h1>
+            <div class="records-container">
+                <div id="records-list" class="records-list">
+                    <!-- Recordes serão inseridos aqui dinamicamente -->
+                </div>
+            </div>
+            <div class="records-controls">
+                <button class="menu-btn" id="clear-records-btn">🗑️ Limpar Recordes</button>
+                <button class="menu-btn secondary" id="back-to-menu-btn">← Voltar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tela de Pausa -->
+    <div id="pause-screen" class="screen overlay">
+        <div class="pause-container">
+            <h2>⏸️ Jogo Pausado</h2>
+            <div class="pause-controls">
+                <button class="menu-btn" id="resume-btn">▶️ Continuar</button>
+                <button class="menu-btn secondary" id="pause-menu-btn">🏠 Menu Principal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio Elements -->
+    <audio id="eat-sound" preload="auto">
+        <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT" type="audio/wav">
+    </audio>
+    <audio id="energy-low-sound" preload="auto">
+        <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT" type="audio/wav">
+    </audio>
+    <audio id="life-lost-sound" preload="auto">
+        <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT" type="audio/wav">
+    </audio>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
