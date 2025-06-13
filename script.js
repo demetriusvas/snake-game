@@ -108,6 +108,7 @@ class SnakeGame {
         this.snake.reset();
         this.food.generate(this.snake.body, this.gridSize);
         this.startEnergyTimer();
+        document.getElementById('new-record-display').classList.add('hidden'); // Esconder msg de recorde anterior
         this.startFoodTimer();
         this.showScreen('game');
         this.updateHUD();
@@ -333,6 +334,7 @@ class SnakeGame {
         this.gameState = 'gameover';
         clearInterval(this.gameLoop);
         clearInterval(this.energyTimer);
+        this.soundManager.playGameOver(); // Tocar som de Game Over
         clearTimeout(this.foodTimer);
 
         // Atualizar estatísticas finais
@@ -343,23 +345,43 @@ class SnakeGame {
         // Verificar se é um novo recorde
         if (this.recordsManager.isNewRecord(this.score)) {
             // Salvar recorde automaticamente com nome padrão
-            const playerName = 'Jogador'; // Nome padrão para o recorde
-            this.recordsManager.addRecord({
-                name: playerName,
+            const newRecordData = {
+                name: 'Jogador', // Nome padrão para o recorde
                 score: this.score,
                 level: this.currentLevel,
                 speed: (GAME_CONFIG.INITIAL_SPEED[this.currentLevel] / this.speed).toFixed(1),
                 date: new Date().toLocaleString('pt-BR'),
-            });
-            // Avisar com confetes!
-            if (typeof confetti === 'function') {
-                confetti({
-                    particleCount: 150, // Mais confetes para a celebração!
-                    spread: 100,        // Espalhar mais
-                    origin: { y: 0.6 }, // Origem um pouco abaixo do centro vertical
-                    zIndex: 10000       // Garantir que fique por cima de outros elementos
-                });
-            }
+            };
+            this.recordsManager.addRecord(newRecordData);
+            
+            // Atrasar o som de novo recorde e as celebrações
+            setTimeout(() => {
+                this.soundManager.playNewRecord(); // Tocar som de novo recorde
+
+                // Calcular e mostrar a posição do recorde
+                const updatedRecords = this.recordsManager.getRecords();
+                const newRecordRank = updatedRecords.findIndex(r => 
+                    r.score === newRecordData.score && 
+                    r.name === newRecordData.name && 
+                    r.date === newRecordData.date // Garante que é o recorde exato que acabamos de adicionar
+                ) + 1;
+
+                if (newRecordRank > 0) {
+                    const newRecordDisplay = document.getElementById('new-record-display');
+                    newRecordDisplay.textContent = `🎉 Novo Recorde! Você ficou em #${newRecordRank}! 🎉`;
+                    newRecordDisplay.classList.remove('hidden');
+                }
+
+                // Avisar com confetes
+                if (typeof confetti === 'function') {
+                    confetti({
+                        particleCount: 150,
+                        spread: 100,
+                        origin: { y: 0.6 },
+                        zIndex: 10000 
+                    });
+                }
+            }, 1000); // 1000 milissegundos = 1 segundo de atraso
         }
 
         this.showScreen('gameover');
@@ -373,6 +395,7 @@ class SnakeGame {
         this.gameState = 'stopped';
         clearInterval(this.gameLoop);
         clearInterval(this.energyTimer);
+        document.getElementById('new-record-display').classList.add('hidden'); // Esconder msg de recorde
         clearTimeout(this.foodTimer);
         this.showScreen('menu');
     }
@@ -629,6 +652,8 @@ class SoundManager {
         this.eatSound = document.getElementById('eat-sound');
         this.energyLowSound = document.getElementById('energy-low-sound');
         this.lifeLostSound = document.getElementById('life-lost-sound');
+        this.newRecordSound = document.getElementById('new-record-sound'); // Adicionado para consistência com melhorias anteriores
+        this.gameOverSound = document.getElementById('game-over-sound');
         this.enabled = true;
     }
 
@@ -652,6 +677,22 @@ class SoundManager {
             this.lifeLostSound.play().catch(() => {});
         }
     }
+
+    // Adicionado para consistência com melhorias anteriores, caso sejam aplicadas
+    playNewRecord() { 
+        if (this.enabled && this.newRecordSound) {
+            this.newRecordSound.currentTime = 0;
+            this.newRecordSound.play().catch(() => {});
+        }
+    }
+
+    playGameOver() {
+        if (this.enabled && this.gameOverSound) {
+            this.gameOverSound.currentTime = 0;
+            this.gameOverSound.play().catch(() => {});
+        }
+    }
+
 }
 
 // ===== CLASSE DE RECORDES =====
