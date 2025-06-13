@@ -278,10 +278,20 @@ class SnakeGame {
         });
 
         // Atualizar barra de energia
-        document.getElementById('energy-bar').style.width = `${this.energy}%`;
+        const energyBarElement = document.getElementById('energy-bar');
+        energyBarElement.style.width = `${this.energy}%`;
+        energyBarElement.style.backgroundColor = this._getEnergyColor(this.energy);
     }
 
     togglePause() {
+        // Salvar o tempo de início da energia antes de pausar para cálculo correto ao resumir
+        if (this.gameState === 'playing') {
+            this.pausedEnergyStartTime = Date.now() - ((100 - this.energy) / 100) * GAME_CONFIG.ENERGY_DURATION;
+        }
+
+
+
+
         if (this.gameState === 'playing') {
             this.gameState = 'paused';
             clearInterval(this.gameLoop);
@@ -289,7 +299,7 @@ class SnakeGame {
             clearTimeout(this.foodTimer);
             
             // Salvar estado da energia para continuar de onde parou
-            this.pausedEnergyTime = Date.now();
+            // this.pausedEnergyTime = Date.now(); // Lógica antiga, substituída/complementada acima
             this.showScreen('pause');
         } else if (this.gameState === 'paused') {
             this.gameState = 'playing';
@@ -304,8 +314,8 @@ class SnakeGame {
 
     resumeEnergyTimer() {
         clearInterval(this.energyTimer);
-        const remainingTime = (this.energy / 100) * GAME_CONFIG.ENERGY_DURATION;
-        const startTime = Date.now() - (GAME_CONFIG.ENERGY_DURATION - remainingTime);
+        // Usar o tempo de início salvo para garantir a continuidade correta
+        const startTime = this.pausedEnergyStartTime || (Date.now() - ((100 - this.energy) / 100) * GAME_CONFIG.ENERGY_DURATION);
         let lowEnergySoundPlayed = this.energy <= 10;
         
         this.energyTimer = setInterval(() => {
@@ -423,6 +433,12 @@ class SnakeGame {
     getLevelName() {
         const names = { easy: 'Fácil', medium: 'Médio', hard: 'Difícil' };
         return names[this.currentLevel];
+    }
+
+    _getEnergyColor(percentage) {
+        // Hue vai de 0 (vermelho) a 120 (verde)
+        const hue = (percentage / 100) * 120;
+        return `hsl(${hue}, 100%, 50%)`; // Cores vibrantes com 100% de saturação
     }
 }
 
