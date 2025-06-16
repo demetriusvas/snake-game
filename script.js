@@ -88,9 +88,16 @@ class SnakeGame {
 
         // Controles mobile
         document.querySelectorAll('.control-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                this.inputHandler.handleMobileInput(e.target.dataset.direction);
-            });
+            // Usar 'touchstart' para melhor responsividade em dispositivos de toque
+            // e 'mousedown' para cliques com mouse (ex: testes no desktop).
+            const handleControlPress = (e) => {
+                // Previne o comportamento padrão do navegador (como zoom por toque, seleção de texto ou disparo de evento 'click' subsequente)
+                e.preventDefault(); 
+                // Usa e.currentTarget para garantir que estamos pegando o 'data-direction' do botão ao qual o listener foi anexado
+                this.inputHandler.handleMobileInput(e.currentTarget.dataset.direction);
+            };
+            btn.addEventListener('touchstart', handleControlPress, { passive: false }); // passive: false é necessário para que preventDefault() funcione em touchstart
+            btn.addEventListener('mousedown', handleControlPress); // Para interações com o mouse
         });
 
         // Redimensionamento
@@ -161,19 +168,19 @@ class SnakeGame {
     eatFood() {
         this.snake.grow();
         this.score += GAME_CONFIG.POINTS_PER_LEVEL[this.currentLevel];
-        this.increaseSpeed();
+        // this.increaseSpeed(); // Velocidade não aumenta mais ao comer
         this.restoreEnergy();
         this.food.generate(this.snake.body, this.gridSize);
         this.resetFoodTimer();
         this.soundManager.playEat();
     }
-
+/*
     increaseSpeed() {
         this.speed = Math.max(50, this.speed - GAME_CONFIG.SPEED_INCREASE);
         clearInterval(this.gameLoop);
         this.gameLoop = setInterval(() => this.update(), this.speed);
     }
-
+*/
     loseLife() {
         this.lives--;
         this.soundManager.playLifeLost();
