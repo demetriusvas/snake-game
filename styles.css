@@ -123,7 +123,7 @@ body {
 /* ===== MENU PRINCIPAL ===== */
 .game-title {
     font-size: 3rem;
-    font-weight: bold;
+    font-weight: 700; /* Usar valor numérico para consistência */
     margin-bottom: 2rem;
     background: linear-gradient(45deg, var(--accent-primary), var(--accent-secondary));
     -webkit-background-clip: text;
@@ -231,7 +231,7 @@ body {
 .hud {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: stretch; /* Para que os itens preencham a altura se necessário */
     gap: 0.5rem; /* Espaçamento entre as linhas de botões */
     width: 100%;
     max-width: 600px;
@@ -245,6 +245,7 @@ body {
 .hud-left, .hud-center, .hud-right {
     display: flex;
     align-items: center;
+    flex-wrap: wrap; /* Permitir quebra de linha se necessário */
     gap: 1rem;
 }
 
@@ -397,7 +398,7 @@ body {
 /* ===== TELA DE GAME OVER ===== */
 .gameover-title {
     font-size: 2.5rem;
-    font-weight: bold;
+    font-weight: 700;
     margin-bottom: 2rem;
     color: var(--accent-danger);
 }
@@ -511,7 +512,7 @@ body {
 /* ===== TELA DE RECORDES ===== */
 .records-title {
     font-size: 2.5rem;
-    font-weight: bold;
+    font-weight: 700;
     margin-bottom: 2rem;
     color: var(--accent-secondary);
 }
@@ -519,13 +520,19 @@ body {
 .records-container {
     max-height: 400px;
     overflow-y: auto;
-    margin-bottom: 2rem;
+    /* margin-bottom: 2rem; Removido para que o records-list controle o espaçamento */
+    /* O padding e background serão aplicados ao records-list */
 }
 
 .records-list {
     display: flex;
     flex-direction: column;
     gap: 0.1rem; /* Reduzido de 0.15rem */
+    /* Estilos para se assemelhar ao .gameover-stats */
+    padding: 1.5rem;
+    background: var(--bg-tertiary);
+    border-radius: 15px;
+    margin-bottom: 2rem; /* Adicionado para espaçamento antes dos botões */
 }
 
 .record-item {
@@ -533,9 +540,15 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 0.05rem 0.4rem; /* Reduzido de 0.1rem 0.6rem */
-    background: var(--bg-tertiary);
-    border-radius: 10px;
-    border-left: 4px solid var(--accent-primary);
+    /* background: var(--bg-tertiary); Removido, pois a lista agora tem fundo */
+    /* border-radius: 10px; Removido */
+    /* border-left: 4px solid var(--accent-primary); Removido para se assemelhar ao .stat */
+    padding: 0.75rem 0.2rem; /* Ajustado para mais altura e menos padding lateral */
+    border-bottom: 1px solid var(--border-color);
+}
+
+.record-item:last-child {
+    border-bottom: none;
 }
 
 .record-rank {
@@ -543,6 +556,7 @@ body {
     font-weight: bold;
     color: var(--accent-primary);
     min-width: 30px; /* Reduzido de 40px */
+    text-align: left;
 }
 
 .record-info {
@@ -550,23 +564,27 @@ body {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    margin-left: 0.4rem; /* Reduzido de 0.6rem */
+    margin-left: 0.4rem; 
+    gap: 0.1rem; /* Pequeno espaço entre nome e detalhes */
 }
 
 .record-name {
     font-weight: bold;
-    font-size: 0.7rem; /* Reduzido de 0.75rem */
+    font-size: 0.9rem; /* Aumentado para destaque, similar ao stat-value */
+    color: var(--text-primary); /* Cor principal do texto */
 }
 
 .record-details {
-    font-size: 0.6rem; /* Reduzido de 0.65rem */
+    font-size: 0.7rem; /* Levemente aumentado */
     color: var(--text-secondary);
 }
 
 .record-score {
-    font-size: 0.75rem; /* Reduzido de 0.85rem */
+    font-size: 1rem; /* Aumentado para destaque, similar ao stat-value */
     font-weight: bold;
-    color: var(--accent-success);
+    color: var(--accent-primary); /* Alinhado com stat-value, ou pode ser --accent-success se preferir */
+    min-width: 50px; /* Para garantir alinhamento */
+    text-align: right;
 }
 
 .records-controls {
@@ -598,198 +616,331 @@ body {
 
 /* ===== RESPONSIVIDADE ===== */
 @media (max-width: 768px) {
+    /* Containers de menu ocupam toda a tela */
     .container {
-        padding: 0.5rem; /* De 1rem */
-        margin: 0.1rem; /* De 0.2rem */
-        max-width: 95vw; /* Garantir que os containers de menu/gameover não sejam muito largos */
+        padding: 1rem;
+        margin: 0;
+        max-width: 100vw;
+        max-height: 100vh;
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        overflow-y: auto;
     }
 
     .game-title {
-        font-size: 2rem;
+        font-size: 2.5rem;
+        margin-bottom: 1.5rem;
     }
 
+    .menu-options {
+        flex: 1;
+        justify-content: center;
+        gap: 1.2rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .menu-btn {
+        padding: 1.8rem 1.5rem;
+        font-size: 1.2rem;
+        min-height: 80px;
+    }
+
+    .level-name {
+        font-size: 1.4rem;
+    }
+
+    .level-desc {
+        font-size: 1rem;
+    }
+
+    /* Tela de Game Over também ocupa toda a tela */
+    .gameover-title {
+        font-size: 2.2rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .gameover-options {
+        gap: 1.2rem;
+    }
+
+    /* Tela de Recordes também ocupa toda a tela */
+    .records-title {
+        font-size: 2.2rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .records-container {
+        flex: 1;
+        max-height: none;
+        overflow-y: auto;
+    }
+
+    .records-controls {
+        flex-direction: column;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    /* Tela de Pausa */
+    .pause-container {
+        padding: 1rem;
+        margin: 0;
+        max-width: 100vw;
+        max-height: 100vh;
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .pause-container h2 {
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .pause-controls {
+        gap: 1.2rem;
+    }
+
+    /* Ajustes para a tela do jogo */
     .game-container {
-        padding: 0.15rem; /* De 0.2rem */
-        gap: 0.15rem;     /* De 0.2rem */
+        padding: 0.5rem;
+        gap: 0.5rem;
     }
 
     .hud {
         flex-direction: column;
-        gap: 0.15rem;     /* De 0.2rem */
-        padding: 0.15rem; /* De 0.2rem */
+        gap: 0.5rem;
+        padding: 0.8rem;
+        max-width: 95vw;
     }
 
     .hud-left, .hud-center, .hud-right {
         justify-content: center;
+        gap: 0.8rem;
     }
+
     #game-canvas {
-        width: 95vw; /* De 90vw */
-        height: 95vw; /* De 90vw, para manter proporção quadrada baseada na largura */
-        max-height: calc(100vh - 170px); /* Ajustado para HUD e controles mais compactos */
+        width: 95vw;
+        height: 95vw;
+        max-height: calc(100vh - 200px);
+        border-width: 2px;
     }
 
     .mobile-controls {
         display: flex;
-        margin-top: 0; /* Controlado pelo gap do game-container */
+        margin-top: 0.5rem;
+    }
 
+    .control-btn {
+        width: 70px;
+        height: 70px;
+        font-size: 1.8rem;
     }
 
     .game-controls {
         flex-wrap: wrap;
         justify-content: center;
-        justify-content: center; /* Já estava, mas bom confirmar */
-        margin-top: 0; /* Controlado pelo gap do game-container */
-        gap: 0.5rem; /* Reduzir gap entre os botões de controle do jogo */
+        gap: 0.8rem;
+        margin-top: 0.5rem;
     }
 
     .control-button {
-        padding: 0.5rem 1rem;
+        padding: 0.8rem 1.2rem;
         font-size: 0.9rem;
+        min-width: 120px;
     }
 
-    .gameover-stats {
-        padding: 1rem;
+    /* Botão de tema */
+    .theme-btn {
+        width: 45px;
+        height: 45px;
+        font-size: 1.3rem;
+        top: 0.8rem;
+        right: 0.8rem;
     }
 
-    .stat {
-        flex-direction: column;
-        text-align: center;
-        gap: 0.5rem;
-    }
-
-    .records-controls {
-        flex-direction: column;
-    }
-
-    .record-item {
-        flex-direction: column;
-        text-align: center;
-        gap: 0.1rem; /* Reduzido de 0.5rem para manter a compacidade */
-    }
-
-    .record-info {
-        align-items: center;
-        margin-left: 0;
-    }
-}
-
-@media (max-width: 480px) {
-    .game-title {
-        font-size: 1.5rem;
-    }
-
-    .container { /* Ajuste para telas muito pequenas */
-        padding: 0.2rem; /* De 0.5rem */
-        margin: 0;  /* De 0.1rem, removendo margem externa */
-        max-width: 100vw; /* Permitir ocupar toda a largura */
-        border-radius: 0; /* Remover bordas arredondadas para preencher a tela */
-    }
-
-    .hud {
-        gap: 0.1rem; /* De 0.25rem */
-        padding: 0.1rem; /* De 0.25rem */
-    }
-    .hud .label {
-        font-size: 0.75rem; /* Reduzir fonte dos labels */
-    }
-    #score, #speed {
-        font-size: 0.9rem; /* Reduzir fonte dos valores */
-    }
-    .heart {
-        font-size: 1rem; /* Reduzir corações */
-    }
+    /* Ajustes para elementos específicos em mobile */
     .energy-bar-container {
-        width: 80px; /* Reduzir largura da barra de energia */
+        width: 80px;
         height: 6px;
     }
 
-    .menu-btn {
-        padding: 1rem;
+    .label {
+        font-size: 0.8rem;
+    }
+
+    #score, #speed {
         font-size: 1rem;
     }
 
-    .level-name {
+    .heart {
         font-size: 1.1rem;
+    }
+
+    /* Melhorias para a mensagem de novo recorde em mobile */
+    .new-record-message {
+        font-size: 1.2em;
+        padding: 15px 20px;
+        margin: 20px 0;
+    }
+
+    /* Ajustes para estatísticas do game over */
+    .gameover-stats {
+        padding: 1.2rem;
+        gap: 0.8rem;
+    }
+
+    .stat {
+        padding: 0.6rem 0;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+    }
+
+    .stat-value {
+        font-size: 1rem;
+    }
+
+    /* Ajustes para recordes */
+    .records-list {
+        padding: 1.2rem;
+    }
+
+    .record-item {
+        padding: 0.8rem 0.3rem;
+    }
+
+    .record-rank {
+        font-size: 0.75rem;
+        min-width: 25px;
+    }
+
+    .record-name {
+        font-size: 0.85rem;
+    }
+
+    .record-details {
+        font-size: 0.65rem;
+    }
+
+    .record-score {
+        font-size: 0.9rem;
+        min-width: 45px;
+    }
+}
+
+/* ===== RESPONSIVIDADE PARA TELAS MUITO PEQUENAS ===== */
+@media (max-width: 480px) {
+    .game-title {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .menu-btn {
+        padding: 1.5rem 1rem;
+        font-size: 1.1rem;
+        min-height: 70px;
+    }
+
+    .level-name {
+        font-size: 1.2rem;
+    }
+
+    .level-desc {
+        font-size: 0.9rem;
+    }
+
+    .gameover-title, .records-title {
+        font-size: 1.8rem;
+        margin-bottom: 1rem;
+    }
+
+    .pause-container h2 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .control-btn {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+    }
+
+    .control-button {
+        padding: 0.6rem 1rem;
+        font-size: 0.8rem;
+        min-width: 100px;
     }
 
     .theme-btn {
         width: 40px;
         height: 40px;
-        font-size: 1.2rem;
+        font-size: 1.1rem;
+        top: 0.5rem;
+        right: 0.5rem;
+    }
+
+    .new-record-message {
+        font-size: 1.1em;
+        padding: 12px 15px;
+        margin: 15px 0;
+    }
+}
+
+/* ===== RESPONSIVIDADE PARA LANDSCAPE EM MOBILE ===== */
+@media (max-width: 768px) and (orientation: landscape) {
+    .container {
+        height: 100vh;
+        overflow-y: auto;
+    }
+
+    .game-title {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .menu-options {
+        gap: 0.8rem;
+        margin-bottom: 1rem;
+    }
+
+    .menu-btn {
+        padding: 1.2rem 1rem;
+        min-height: 60px;
+    }
+
+    #game-canvas {
+        max-height: calc(100vh - 150px);
+        width: auto;
+        height: calc(100vh - 150px);
+    }
+
+    .mobile-controls {
+        margin-top: 0.3rem;
     }
 
     .control-btn {
-        width: 45px;       /* De 50px */
-        height: 45px;      /* De 50px */
-        font-size: 1.1rem; /* De 1.2rem, embora o SVG seja mais importante */
+        width: 50px;
+        height: 50px;
+        font-size: 1.3rem;
     }
-    .control-btn svg {
-        width: 20px;       /* De 24px */
-        height: 20px;      /* De 24px */
+
+    .game-controls {
+        margin-top: 0.3rem;
     }
-    #game-canvas {
-        width: 98vw; /* Aumentar um pouco mais a largura */
-        height: 98vw; /* Manter proporção */
-        max-height: calc(100vh - 130px); /* Estimativa ainda menor para HUD/controles em telas muito pequenas */
-    }
-    .game-container { /* Para telas muito pequenas, remover padding e gap quase que totalmente */
-        padding: 0.05rem;
-        gap: 0.05rem;
+
+    .control-button {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.8rem;
+        min-width: 90px;
     }
 }
 
-/* ===== ANIMAÇÕES ADICIONAIS ===== */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes slideIn {
-    from { transform: translateX(-100%); }
-    to { transform: translateX(0); }
-}
-
-@keyframes bounce {
-    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-    40% { transform: translateY(-10px); }
-    60% { transform: translateY(-5px); }
-}
-
-.menu-btn {
-    animation: fadeIn 0.5s ease-out;
-}
-
-.menu-btn:nth-child(1) { animation-delay: 0.1s; }
-.menu-btn:nth-child(2) { animation-delay: 0.2s; }
-.menu-btn:nth-child(3) { animation-delay: 0.3s; }
-.menu-btn:nth-child(4) { animation-delay: 0.4s; }
-
-/* ===== SCROLLBAR PERSONALIZADA ===== */
-::-webkit-scrollbar {
-    width: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: var(--bg-tertiary);
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb {
-    background: var(--accent-primary);
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: var(--accent-secondary);
-}
-
-/* ===== ESTADOS DE FOCO PARA ACESSIBILIDADE ===== */
-button:focus, input:focus {
-    outline: 2px solid var(--accent-primary);
-    outline-offset: 2px;
-}
-
-/* ===== TRANSIÇÕES SUAVES ===== */
-* {
-    transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
-}
